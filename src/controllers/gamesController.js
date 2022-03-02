@@ -15,3 +15,15 @@ export async function setGames(req, res) {
     res.sendStatus(500)
   }
 }
+
+export async function getGames(req, res) {
+  try {
+    const { rows: games } = await connection.query(`
+    SELECT * FROM games`);
+
+    res.send(games);
+  } catch(error) {
+    console.log(error.message);
+    res.sendStatus(500);
+  }
+}

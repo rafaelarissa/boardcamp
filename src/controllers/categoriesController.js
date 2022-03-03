@@ -5,7 +5,7 @@ export async function setCategories(req, res) {
     const {rows: listCategories } = await connection.query(`
     SELECT (name) FROM categories`);
     
-    const searchCategories = listCategories.find(() => req.body)
+    const searchCategories = listCategories.find((item) => item.name === req.body.name)
     if(searchCategories) {
 
       res.status(409).send('Nome de categoria já existente');

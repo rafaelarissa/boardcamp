@@ -39,7 +39,7 @@ export async function getCustomers(req, res) {
   }
 }
 
-export async function getCustomerPerId(req, res) {
+export async function getCustomerById(req, res) {
   let id = '';
 
   if(req.params.id) {
@@ -47,6 +47,16 @@ export async function getCustomerPerId(req, res) {
   }
 
   try {
+    const {rows: listCustomers } = await connection.query(`
+    SELECT customers.id FROM customers`);
+    
+    const searchCustomers = listCustomers.find((item) => item.id === parseInt(id))
+    if(!searchCustomers) {
+
+      res.status(404).send('Cliente não encontrado');
+      return
+    }
+
     const { rows: customers } = await connection.query(`
     SELECT * FROM customers
     WHERE customers.id=${id}`);

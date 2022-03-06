@@ -15,3 +15,15 @@ export async function setCustomers(req, res) {
     res.sendStatus(500)
   }
 }
+
+export async function getCustomers(req, res) {
+  try {
+    const { rows: customers } = await connection.query(`
+    SELECT * FROM customers`);
+
+    res.send(customers);
+  } catch(error) {
+    console.log(error.message);
+    res.sendStatus(500);
+  }
+}

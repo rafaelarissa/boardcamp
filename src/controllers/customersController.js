@@ -27,7 +27,6 @@ export async function setCustomers(req, res) {
 }
 
 export async function getCustomers(req, res) {
-  
   try {
     const { rows: customers } = await connection.query(`
     SELECT * FROM customers`);
@@ -67,3 +66,35 @@ export async function getCustomerById(req, res) {
     res.sendStatus(500);
   }
 }
+
+export async function updateCustomers(req, res) {
+  const { name, phone, cpf, birthday } = req.body;
+  let id = '';
+
+  if(req.params.id) {
+    id = `${req.params.id}`;
+  }
+
+  try {
+    // const {rows: listCustomers } = await connection.query(`
+    // SELECT (cpf) FROM customers`);
+    
+    // const searchCustomers = listCustomers.find((item) => item.cpf === req.body.cpf)
+    // if(searchCustomers) {
+
+    //   res.status(409).send('Cliente já existente');
+    //   return
+    // }
+
+    await connection.query(`
+    UPDATE customers 
+    SET (name, phone, cpf, birthday) = ($1, $2, $3, $4)
+    WHERE customers.id=${id}
+    `, [name, phone, cpf, birthday]);
+
+    res.sendStatus(200)
+  } catch (error) {
+    console.log(error.message)
+    res.sendStatus(500)
+  }
+} 

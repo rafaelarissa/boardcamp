@@ -36,12 +36,22 @@ export async function setGames(req, res) {
 }
 
 export async function getGames(req, res) {
+  const name = req.query.name;
+  
   try {
-    const { rows: games } = await connection.query(`
-    SELECT games.*, categories.name as "categoryName", games.name FROM games JOIN categories ON games."categoryId"=categories.id`);
-    console.log(games)
-
-    res.send(games);
+    if((req.query.name)){
+      const { rows: games } = await connection.query(`
+      SELECT games.*, categories.name as "categoryName", games.name FROM games JOIN categories ON games."categoryId"=categories.id
+      WHERE LOWER(games.name) LIKE LOWER ($1)`, [`${name}%`]);   
+      
+      res.send(games);
+    } else {
+      const { rows: games } = await connection.query(`
+      SELECT games.*, categories.name as "categoryName", games.name FROM games JOIN categories ON games."categoryId"=categories.id
+      `);
+      res.send(games);
+    }
+    
   } catch(error) {
     console.log(error.message);
     res.sendStatus(500);

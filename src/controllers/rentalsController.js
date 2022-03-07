@@ -5,6 +5,26 @@ export async function setRentals(req, res) {
   const { customerId, gameId, daysRented } = req.body;
   
   try {
+    const {rows: listCustomers } = await connection.query(`
+    SELECT customers.id FROM customers`);
+    
+    const searchCustomers = listCustomers.find((item) => item.id === customerId)
+    if(!searchCustomers) {
+
+      res.status(400).send('Cliente não encontrado');
+      return
+    }
+
+    const {rows: listGames } = await connection.query(`
+    SELECT games.id FROM games`);
+    
+    const searchGames = listGames.find((item) => item.id === gameId)
+    if(!searchGames) {
+
+      res.status(400).send('Jogo não encontrado');
+      return
+    }
+
     const { rows: pricePerDay } = await connection.query(`
     SELECT games."pricePerDay"
     FROM games 

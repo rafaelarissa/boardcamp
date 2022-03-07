@@ -27,11 +27,23 @@ export async function setCustomers(req, res) {
 }
 
 export async function getCustomers(req, res) {
-  try {
-    const { rows: customers } = await connection.query(`
-    SELECT * FROM customers`);
+  const cpf = req.query.cpf;
 
-    res.send(customers);
+  try {
+    if(req.query.cpf) {
+      const { rows: customers } = await connection.query(`
+      SELECT * FROM customers
+        WHERE customers.cpf LIKE ($1)
+        `, [`${cpf}%`]);
+    
+      res.send(customers);
+    }else {
+      const { rows: customers } = await connection.query(`
+      SELECT * FROM customers`);
+  
+      res.send(customers);
+    }
+
   } catch(error) {
     console.log(error.message);
     res.sendStatus(500);
